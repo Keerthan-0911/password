@@ -1,0 +1,6 @@
+{
+  "name": "SecurePass — Password Strength Analyzer",
+  "description": "A professional cybersecurity-themed password strength analyzer, secure generator, and security dashboard.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

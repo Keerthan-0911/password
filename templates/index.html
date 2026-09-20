@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecurePass — Enterprise Password Strength Analyzer</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="landing-body">
+    <!-- Navbar -->
+    <header class="landing-nav">
+        <div class="landing-container nav-container">
+            <div class="brand-logo">
+                <div class="shield-badge">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </div>
+                <span class="brand-name">Secure<span class="text-cyan">Pass</span></span>
+            </div>
+            <div class="nav-links">
+                <a href="#features">Features</a>
+                <a href="#how-it-works">How It Works</a>
+                <a href="#importance">Security</a>
+                <a href="{{ url_for('login') }}" class="btn btn-outline">Sign In</a>
+                <a href="{{ url_for('login') }}" class="btn btn-primary">Get Started</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="landing-container hero-content text-center">
+            <div class="cyber-badge">
+                <span class="pulse-dot"></span>
+                Enterprise Cryptographic Defense v2.4
+            </div>
+            <h1 class="hero-title">
+                Build Stronger Passwords.<br>
+                <span class="gradient-text">Protect Your Digital Life.</span>
+            </h1>
+            <p class="hero-subtitle">
+                SecurePass analyzes password entropy, simulates brute-force resistance, and generates cryptographically uncrackable credentials in real-time.
+            </p>
+            <div class="hero-actions">
+                <a href="{{ url_for('login') }}" class="btn btn-primary btn-lg">
+                    <i class="fa-solid fa-rocket"></i> Get Started
+                </a>
+                <a href="{{ url_for('login') }}" class="btn btn-glass btn-lg">
+                    <i class="fa-solid fa-shield-virus"></i> Analyze Password
+                </a>
+            </div>
+
+            <!-- Dashboard Preview Glass Frame -->
+            <div class="hero-preview-wrapper">
+                <div class="hero-preview-card glass-panel">
+                    <div class="preview-header">
+                        <div class="preview-dots">
+                            <span class="dot dot-red"></span>
+                            <span class="dot dot-yellow"></span>
+                            <span class="dot dot-green"></span>
+                        </div>
+                        <span class="preview-title">Live Entropy & Vulnerability Telemetry</span>
+                    </div>
+                    <div class="preview-grid">
+                        <div class="preview-metric">
+                            <span class="p-num text-cyan">99.8%</span>
+                            <span class="p-lbl">Entropy Guarantee</span>
+                        </div>
+                        <div class="preview-metric">
+                            <span class="p-num text-emerald">0.00s</span>
+                            <span class="p-lbl">Plaintext Stored</span>
+                        </div>
+                        <div class="preview-metric">
+                            <span class="p-num text-purple">256-bit</span>
+                            <span class="p-lbl">System PRNG</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why Password Security Matters -->
+    <section class="landing-section" id="importance">
+        <div class="landing-container">
+            <div class="section-heading text-center">
+                <h2 class="section-title">Why Password Security Matters</h2>
+                <p class="section-desc">Over 80% of enterprise security breaches stem from compromised or predictable login credentials.</p>
+            </div>
+
+            <div class="feature-grid-3">
+                <div class="glass-card feature-card">
+                    <div class="feature-icon icon-cyan">
+                        <i class="fa-solid fa-lock"></i>
+                    </div>
+                    <h3>Strong Passwords</h3>
+                    <p>Prevent brute-force dictionary attacks by incorporating high entropy, non-sequential symbols, and robust length matrices.</p>
+                </div>
+                <div class="glass-card feature-card">
+                    <div class="feature-icon icon-purple">
+                        <i class="fa-solid fa-dice-d20"></i>
+                    </div>
+                    <h3>Secure Generation</h3>
+                    <p>Generate truly random passwords backed by cryptographically secure pseudo-random generators (CSPRNG) using system entropy.</p>
+                </div>
+                <div class="glass-card feature-card">
+                    <div class="feature-icon icon-emerald">
+                        <i class="fa-solid fa-magnifying-glass-chart"></i>
+                    </div>
+                    <h3>Security Insights</h3>
+                    <p>Obtain instant audits of character distribution, entropy scores, crack time estimates, and actionable vulnerability remediation.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="landing-section bg-darker" id="how-it-works">
+        <div class="landing-container">
+            <div class="section-heading text-center">
+                <h2 class="section-title">How It Works</h2>
+                <p class="section-desc">Zero-knowledge evaluation ensuring your credentials never touch a database in plaintext.</p>
+            </div>
+
+            <div class="steps-grid">
+                <div class="step-card">
+                    <div class="step-badge">01</div>
+                    <h4>Enter Credential</h4>
+                    <p>Type or paste any candidate password in our memory-isolated analyzer field.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-badge">02</div>
+                    <h4>Real-time Audit</h4>
+                    <p>Our 5-tier evaluation matrix assesses character sets, length, dictionary repetition, and bits of entropy.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-badge">03</div>
+                    <h4>Fortify & Secure</h4>
+                    <p>Receive immediate recommendations or generate an uncrackable replacement with one click.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section class="landing-section" id="features">
+        <div class="landing-container">
+            <div class="section-heading text-center">
+                <h2 class="section-title">Enterprise Security Features</h2>
+                <p class="section-desc">Comprehensive suite designed for personal defense and enterprise compliance.</p>
+            </div>
+
+            <div class="features-list-grid">
+                <div class="feature-item glass-panel">
+                    <i class="fa-solid fa-gauge-high text-cyan"></i>
+                    <div>
+                        <h5>Real-Time Password Analyzer</h5>
+                        <p>Dynamic score meter with 5 compliance checks, visual entropy bars, and live guidance.</p>
+                    </div>
+                </div>
+                <div class="feature-item glass-panel">
+                    <i class="fa-solid fa-wand-magic-sparkles text-purple"></i>
+                    <div>
+                        <h5>CSPRNG Generator</h5>
+                        <p>Customize length (8–50) with character toggles, ambiguity filters, and instant clipboard copy.</p>
+                    </div>
+                </div>
+                <div class="feature-item glass-panel">
+                    <i class="fa-solid fa-shield-heart text-emerald"></i>
+                    <div>
+                        <h5>Audit Trail & History</h5>
+                        <p>Chronological records of security ratings, scores, and timestamps without storing passwords.</p>
+                    </div>
+                </div>
+                <div class="feature-item glass-panel">
+                    <i class="fa-solid fa-chart-line text-amber"></i>
+                    <div>
+                        <h5>Visual Analytics (Chart.js)</h5>
+                        <p>Deep dive into your credential portfolio strength with doughnut and distribution charts.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="cta-box glass-panel text-center">
+                <h3>Ready to secure your credentials?</h3>
+                <p>Launch the SecurePass dashboard immediately and safeguard your digital perimeter.</p>
+                <a href="{{ url_for('login') }}" class="btn btn-primary btn-lg">Launch SecurePass Dashboard</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="landing-footer">
+        <div class="landing-container footer-content">
+            <div class="footer-left">
+                <div class="brand-logo">
+                    <div class="shield-badge"><i class="fa-solid fa-shield-halved"></i></div>
+                    <span class="brand-name">Secure<span class="text-cyan">Pass</span></span>
+                </div>
+                <p class="footer-desc">Next-generation cybersecurity password analyzer and credential protection suite.</p>
+            </div>
+            <div class="footer-right text-muted">
+                &copy; 2025 SecurePass Technologies. Zero-Knowledge Password Security Architecture.
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

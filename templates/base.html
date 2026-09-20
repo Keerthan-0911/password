@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}SecurePass — Cybersecurity Password Analyzer{% endblock %}</title>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Custom Cyber CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    {% block head %}{% endblock %}
+</head>
+<body class="cyber-body">
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <div class="app-layout">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="brand-logo">
+                    <div class="shield-badge">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </div>
+                    <div class="brand-text">
+                        <span class="brand-name">Secure<span class="text-cyan">Pass</span></span>
+                        <span class="brand-tag">v2.4 Enterprise</span>
+                    </div>
+                </div>
+                <button class="sidebar-close-btn" id="sidebar-close-btn" aria-label="Close Sidebar">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="nav-group-title">CORE SECURITY</div>
+            <nav class="sidebar-nav">
+                <a href="{{ url_for('dashboard') }}" class="nav-link {% if request.endpoint == 'dashboard' %}active{% endif %}">
+                    <i class="fa-solid fa-chart-pie"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="{{ url_for('analyze') }}" class="nav-link {% if request.endpoint == 'analyze' %}active{% endif %}">
+                    <i class="fa-solid fa-shield-virus"></i>
+                    <span>Analyze Password</span>
+                    <span class="badge-pill">Live</span>
+                </a>
+                <a href="{{ url_for('generator') }}" class="nav-link {% if request.endpoint == 'generator' %}active{% endif %}">
+                    <i class="fa-solid fa-key"></i>
+                    <span>Password Generator</span>
+                </a>
+                <a href="{{ url_for('history') }}" class="nav-link {% if request.endpoint == 'history' %}active{% endif %}">
+                    <i class="fa-solid fa-clock-rotate-left"></i>
+                    <span>Audit History</span>
+                </a>
+                <a href="{{ url_for('statistics') }}" class="nav-link {% if request.endpoint == 'statistics' %}active{% endif %}">
+                    <i class="fa-solid fa-chart-simple"></i>
+                    <span>Security Statistics</span>
+                </a>
+
+                <div class="nav-group-title mt-4">MANAGEMENT</div>
+                <a href="{{ url_for('settings') }}" class="nav-link {% if request.endpoint == 'settings' %}active{% endif %}">
+                    <i class="fa-solid fa-sliders"></i>
+                    <span>Settings & Policy</span>
+                </a>
+                <a href="{{ url_for('logout') }}" class="nav-link nav-logout">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                    <span>Logout</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="system-status-indicator">
+                    <span class="status-pulse"></span>
+                    <span class="status-text">AES-256 Engine Active</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Wrapper -->
+        <div class="main-wrapper">
+            <!-- Top Navbar -->
+            <header class="top-nav">
+                <div class="top-nav-left">
+                    <button class="mobile-toggle-btn" id="mobile-toggle-btn" aria-label="Toggle Navigation">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+                    <div class="page-title-group">
+                        <h1 class="page-header-title">{% block page_title %}Security Overview{% endblock %}</h1>
+                        <span class="page-header-sub">{% block page_sub %}Threat analysis and credential hygiene monitoring{% endblock %}</span>
+                    </div>
+                </div>
+
+                <div class="top-nav-right">
+                    <div class="search-box">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" placeholder="Search security logs..." id="global-search-input">
+                    </div>
+
+                    <div class="nav-action-item notification-wrapper">
+                        <button class="icon-action-btn" id="notification-btn" aria-label="Notifications">
+                            <i class="fa-solid fa-bell"></i>
+                            <span class="notification-badge"></span>
+                        </button>
+                    </div>
+
+                    <div class="user-profile-menu">
+                        <div class="user-avatar-btn" id="profile-dropdown-btn">
+                            <div class="avatar-circle">
+                                <span>{{ (user.username[0] if user and user.username else 'A') | upper }}</span>
+                            </div>
+                            <div class="user-info d-none-mobile">
+                                <span class="user-name">{{ user.username if user else 'SecOps Analyst' }}</span>
+                                <span class="user-role">SOC Operator</span>
+                            </div>
+                            <i class="fa-solid fa-chevron-down dropdown-arrow"></i>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Main Page Content -->
+            <main class="page-content">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        <div class="flashes-container">
+                            {% for category, message in messages %}
+                                <div class="alert-banner alert-{{ category }}">
+                                    <i class="fa-solid fa-circle-check"></i>
+                                    <span>{{ message }}</span>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endwith %}
+
+                {% block content %}{% endblock %}
+            </main>
+        </div>
+    </div>
+
+    <!-- Global JS -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

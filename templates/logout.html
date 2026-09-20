@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logged Out — SecurePass</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="auth-body">
+    <div class="logout-screen-wrapper">
+        <div class="glass-panel logout-card text-center">
+            <div class="logout-icon-halo">
+                <i class="fa-solid fa-shield-check text-emerald"></i>
+            </div>
+            <h2>Successfully Logged Out</h2>
+            <p class="text-muted">Your session has been securely terminated and all operational memory caches have been purged.</p>
+
+            <div class="logout-meta-box font-mono text-sm">
+                <div><span>Status:</span> <strong class="text-emerald">Zero-Knowledge Purged</strong></div>
+                <div><span>Session Security:</span> <span class="text-cyan">Encrypted Handshake Closed</span></div>
+            </div>
+
+            <div class="logout-actions">
+                <a href="{{ url_for('login') }}" class="btn btn-primary btn-lg">
+                    <i class="fa-solid fa-arrow-right-to-bracket"></i> Login Again
+                </a>
+                <a href="{{ url_for('index') }}" class="btn btn-glass btn-lg">
+                    <i class="fa-solid fa-house"></i> Return to Home
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,62 @@
+[
+  {
+    "id": "chk-1710892800-1",
+    "timestamp": "2025-03-18 14:32:10",
+    "score": 5,
+    "strength": "Strong",
+    "status_class": "strong",
+    "checks": {
+      "length": true,
+      "uppercase": true,
+      "lowercase": true,
+      "number": true,
+      "special": true
+    },
+    "recommendations": "Excellent! Your password meets all standard complexity guidelines."
+  },
+  {
+    "id": "chk-1710892400-2",
+    "timestamp": "2025-03-18 11:20:45",
+    "score": 4,
+    "strength": "Medium",
+    "status_class": "medium",
+    "checks": {
+      "length": true,
+      "uppercase": true,
+      "lowercase": true,
+      "number": true,
+      "special": false
+    },
+    "recommendations": "Add at least one special character (!@#$%^&*) to strengthen this password."
+  },
+  {
+    "id": "chk-1710891000-3",
+    "timestamp": "2025-03-17 19:05:12",
+    "score": 2,
+    "strength": "Weak",
+    "status_class": "weak",
+    "checks": {
+      "length": false,
+      "uppercase": true,
+      "lowercase": true,
+      "number": false,
+      "special": false
+    },
+    "recommendations": "Increase length to at least 8 characters and include numbers and symbols."
+  },
+  {
+    "id": "chk-1710890000-4",
+    "timestamp": "2025-03-17 09:14:33",
+    "score": 5,
+    "strength": "Strong",
+    "status_class": "strong",
+    "checks": {
+      "length": true,
+      "uppercase": true,
+      "lowercase": true,
+      "number": true,
+      "special": true
+    },
+    "recommendations": "Strong cryptographic complexity verified."
+  }
+]

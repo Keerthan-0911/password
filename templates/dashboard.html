@@ -1,0 +1,233 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard — SecurePass SOC{% endblock %}
+{% block page_title %}Security Overview{% endblock %}
+{% block page_sub %}Operational view of credential strength and audit statistics{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <!-- Welcome Hero Card -->
+    <div class="welcome-card glass-panel">
+        <div class="welcome-content">
+            <div class="welcome-badge">
+                <i class="fa-solid fa-shield-check text-cyan"></i>
+                <span>Credential Protection Active</span>
+            </div>
+            <h2>Welcome back, <span class="text-cyan">{{ user.username if user else 'Analyst' }}</span></h2>
+            <p>Keep your digital accounts protected with stronger passwords and zero-knowledge entropy audits.</p>
+            <div class="welcome-actions">
+                <a href="{{ url_for('analyze') }}" class="btn btn-primary">
+                    <i class="fa-solid fa-shield-virus"></i> Analyze Password
+                </a>
+                <a href="{{ url_for('generator') }}" class="btn btn-glass">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> Generate Secure Password
+                </a>
+            </div>
+        </div>
+        <div class="welcome-graphic">
+            <div class="cyber-shield-halo">
+                <i class="fa-solid fa-shield-halved"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4 Security Overview Cards -->
+    <div class="metrics-grid">
+        <!-- Card 1: Passwords Checked -->
+        <div class="metric-card glass-panel border-cyan">
+            <div class="metric-header">
+                <div class="metric-icon-box bg-cyan-glow">
+                    <i class="fa-solid fa-list-check text-cyan"></i>
+                </div>
+                <span class="metric-tag tag-cyan">Total Volume</span>
+            </div>
+            <div class="metric-value">{{ stats.total }}</div>
+            <div class="metric-label">Passwords Checked</div>
+            <div class="metric-footer">
+                <i class="fa-solid fa-chart-line text-cyan"></i>
+                <span>All-time zero-knowledge audits</span>
+            </div>
+        </div>
+
+        <!-- Card 2: Strong Passwords -->
+        <div class="metric-card glass-panel border-emerald">
+            <div class="metric-header">
+                <div class="metric-icon-box bg-emerald-glow">
+                    <i class="fa-solid fa-shield-heart text-emerald"></i>
+                </div>
+                <span class="metric-tag tag-emerald">Score 5/5</span>
+            </div>
+            <div class="metric-value text-emerald">{{ stats.strong }}</div>
+            <div class="metric-label">Strong Passwords</div>
+            <div class="metric-footer">
+                <i class="fa-solid fa-circle-check text-emerald"></i>
+                <span>{% if stats.total > 0 %}{{ ((stats.strong / stats.total) * 100) | round(1) }}%{% else %}0%{% endif %} compliance rate</span>
+            </div>
+        </div>
+
+        <!-- Card 3: Medium Passwords -->
+        <div class="metric-card glass-panel border-amber">
+            <div class="metric-header">
+                <div class="metric-icon-box bg-amber-glow">
+                    <i class="fa-solid fa-triangle-exclamation text-amber"></i>
+                </div>
+                <span class="metric-tag tag-amber">Score 3-4</span>
+            </div>
+            <div class="metric-value text-amber">{{ stats.medium }}</div>
+            <div class="metric-label">Medium Passwords</div>
+            <div class="metric-footer">
+                <i class="fa-solid fa-clock text-amber"></i>
+                <span>Needs minor symbol/length fortification</span>
+            </div>
+        </div>
+
+        <!-- Card 4: Weak Passwords -->
+        <div class="metric-card glass-panel border-rose">
+            <div class="metric-header">
+                <div class="metric-icon-box bg-rose-glow">
+                    <i class="fa-solid fa-skull-crossbones text-rose"></i>
+                </div>
+                <span class="metric-tag tag-rose">Critical</span>
+            </div>
+            <div class="metric-value text-rose">{{ stats.weak }}</div>
+            <div class="metric-label">Weak Passwords</div>
+            <div class="metric-footer">
+                <i class="fa-solid fa-circle-exclamation text-rose"></i>
+                <span>Vulnerable to instant dictionary attack</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Two-Column Section: Quick Analyze + Recent Activity -->
+    <div class="dashboard-split-grid">
+        <!-- Left: Quick Password Test Widget -->
+        <div class="glass-panel widget-card">
+            <div class="widget-header">
+                <h3><i class="fa-solid fa-bolt text-cyan"></i> Instant Password Evaluation</h3>
+                <a href="{{ url_for('analyze') }}" class="view-all-link">Full Studio &rarr;</a>
+            </div>
+            <p class="widget-desc">Test any password strength dynamically. Passwords are never saved.</p>
+            
+            <div class="quick-analyzer-box">
+                <div class="input-icon-wrapper mb-3">
+                    <i class="fa-solid fa-lock input-icon"></i>
+                    <input type="password" id="quick-pass-input" class="form-control" placeholder="Type candidate password...">
+                    <button type="button" class="password-toggle-btn" id="quick-toggle-btn">
+                        <i class="fa-solid fa-eye"></i>
+                    </button>
+                </div>
+                <div class="quick-meter-bar">
+                    <div class="quick-meter-fill" id="quick-meter-fill" style="width: 0%;"></div>
+                </div>
+                <div class="quick-meter-info">
+                    <span id="quick-meter-label" class="text-muted">Enter a password above</span>
+                    <span id="quick-meter-score" class="font-mono text-cyan">0 / 5</span>
+                </div>
+            </div>
+            <div class="text-right mt-3">
+                <a href="{{ url_for('analyze') }}" class="btn btn-outline btn-sm">
+                    Open Comprehensive Analyzer
+                </a>
+            </div>
+        </div>
+
+        <!-- Right: Recent Activity Preview -->
+        <div class="glass-panel widget-card">
+            <div class="widget-header">
+                <h3><i class="fa-solid fa-clock-rotate-left text-purple"></i> Recent Security Audits</h3>
+                <a href="{{ url_for('history') }}" class="view-all-link">View All Logs &rarr;</a>
+            </div>
+            <p class="widget-desc">Only audit timestamps and security scores are logged.</p>
+
+            {% if recent_checks %}
+            <div class="table-responsive">
+                <table class="cyber-table">
+                    <thead>
+                        <tr>
+                            <th>Timestamp</th>
+                            <th>Score</th>
+                            <th>Rating</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in recent_checks %}
+                        <tr>
+                            <td class="font-mono text-muted text-sm">{{ item.timestamp }}</td>
+                            <td><span class="score-badge">{{ item.score }}/5</span></td>
+                            <td>
+                                <span class="status-badge badge-{{ item.status_class }}">
+                                    {{ item.strength }}
+                                </span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="empty-state-mini">
+                <i class="fa-solid fa-inbox text-muted"></i>
+                <p>No password evaluations logged yet.</p>
+                <a href="{{ url_for('analyze') }}" class="btn btn-outline btn-sm">Analyze Your First Password</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Quick analyzer behavior
+    const quickInput = document.getElementById('quick-pass-input');
+    const quickToggle = document.getElementById('quick-toggle-btn');
+    const quickFill = document.getElementById('quick-meter-fill');
+    const quickLabel = document.getElementById('quick-meter-label');
+    const quickScore = document.getElementById('quick-meter-score');
+
+    if (quickToggle && quickInput) {
+        quickToggle.addEventListener('click', () => {
+            quickInput.type = quickInput.type === 'password' ? 'text' : 'password';
+        });
+    }
+
+    if (quickInput) {
+        quickInput.addEventListener('input', () => {
+            const val = quickInput.value;
+            if (!val) {
+                quickFill.style.width = '0%';
+                quickFill.className = 'quick-meter-fill';
+                quickLabel.textContent = 'Enter a password above';
+                quickLabel.className = 'text-muted';
+                quickScore.textContent = '0 / 5';
+                return;
+            }
+
+            let score = 0;
+            if (val.length >= 8) score++;
+            if (/[A-Z]/.test(val)) score++;
+            if (/[a-z]/.test(val)) score++;
+            if (/[0-9]/.test(val)) score++;
+            if (/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?`~]/.test(val)) score++;
+
+            quickScore.textContent = `${score} / 5`;
+            const pct = (score / 5) * 100;
+            quickFill.style.width = `${pct}%`;
+
+            if (score <= 2) {
+                quickFill.className = 'quick-meter-fill bg-rose';
+                quickLabel.textContent = 'Weak Security Level';
+                quickLabel.className = 'text-rose';
+            } else if (score <= 4) {
+                quickFill.className = 'quick-meter-fill bg-amber';
+                quickLabel.textContent = 'Medium Security Level';
+                quickLabel.className = 'text-amber';
+            } else {
+                quickFill.className = 'quick-meter-fill bg-emerald';
+                quickLabel.textContent = 'Strong Enterprise Security';
+                quickLabel.className = 'text-emerald';
+            }
+        });
+    }
+</script>
+{% endblock %}

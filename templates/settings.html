@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+
+{% block title %}Settings & Policy — SecurePass{% endblock %}
+{% block page_title %}Settings & Security Policy{% endblock %}
+{% block page_sub %}Configure password thresholds, security rules, and user environment{% endblock %}
+
+{% block content %}
+<div class="settings-layout">
+    <div class="settings-grid">
+        <!-- Section 1: Profile -->
+        <div class="glass-panel settings-card">
+            <div class="card-top-header">
+                <div>
+                    <h3><i class="fa-solid fa-id-badge text-cyan"></i> Operator Profile</h3>
+                    <p class="text-muted">Manage your local SecOps profile details.</p>
+                </div>
+            </div>
+
+            <form action="{{ url_for('settings') }}" method="POST" class="settings-form">
+                <input type="hidden" name="action" value="profile">
+                <div class="form-group">
+                    <label for="username">Operator Username</label>
+                    <div class="input-icon-wrapper">
+                        <i class="fa-solid fa-user input-icon"></i>
+                        <input type="text" id="username" name="username" class="form-control" value="{{ user.username if user else 'SecOps_Admin' }}" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Notification Email</label>
+                    <div class="input-icon-wrapper">
+                        <i class="fa-solid fa-envelope input-icon"></i>
+                        <input type="email" id="email" name="email" class="form-control" value="{{ user.email if user else 'admin@securepass.io' }}" required>
+                    </div>
+                </div>
+
+                <div class="form-actions text-right">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fa-solid fa-floppy-disk"></i> Update Profile
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Section 2: Password Security Policy -->
+        <div class="glass-panel settings-card">
+            <div class="card-top-header">
+                <div>
+                    <h3><i class="fa-solid fa-shield-halved text-purple"></i> Enterprise Password Policy</h3>
+                    <p class="text-muted">Rules enforced by the Real-Time Analyzer and Password Generator.</p>
+                </div>
+            </div>
+
+            <form action="{{ url_for('settings') }}" method="POST" class="settings-form">
+                <input type="hidden" name="action" value="policy">
+
+                <div class="form-group">
+                    <div class="label-row">
+                        <label for="min_length">Minimum Password Length</label>
+                        <span class="font-mono text-cyan" id="policy-len-display">{{ policy.min_length }} characters</span>
+                    </div>
+                    <input 
+                        type="range" 
+                        id="min_length" 
+                        name="min_length" 
+                        min="6" 
+                        max="32" 
+                        value="{{ policy.min_length }}" 
+                        class="cyber-range"
+                        oninput="document.getElementById('policy-len-display').innerText = this.value + ' characters'"
+                    >
+                </div>
+
+                <div class="toggles-column mt-3">
+                    <label class="cyber-switch-label">
+                        <span class="switch-title">Require Uppercase Letter (A-Z)</span>
+                        <input type="checkbox" name="require_upper" class="cyber-switch" {% if policy.require_upper %}checked{% endif %}>
+                        <span class="switch-slider"></span>
+                    </label>
+
+                    <label class="cyber-switch-label">
+                        <span class="switch-title">Require Lowercase Letter (a-z)</span>
+                        <input type="checkbox" name="require_lower" class="cyber-switch" {% if policy.require_lower %}checked{% endif %}>
+                        <span class="switch-slider"></span>
+                    </label>
+
+                    <label class="cyber-switch-label">
+                        <span class="switch-title">Require Numeric Digits (0-9)</span>
+                        <input type="checkbox" name="require_number" class="cyber-switch" {% if policy.require_number %}checked{% endif %}>
+                        <span class="switch-slider"></span>
+                    </label>
+
+                    <label class="cyber-switch-label">
+                        <span class="switch-title">Require Special Symbols (!@#$%^&*)</span>
+                        <input type="checkbox" name="require_special" class="cyber-switch" {% if policy.require_special %}checked{% endif %}>
+                        <span class="switch-slider"></span>
+                    </label>
+                </div>
+
+                <div class="form-actions text-right mt-4">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fa-solid fa-lock"></i> Save Policy Rules
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Section 3: Appearance & Preferences -->
+        <div class="glass-panel settings-card">
+            <div class="card-top-header">
+                <div>
+                    <h3><i class="fa-solid fa-palette text-emerald"></i> UI Theme & Preferences</h3>
+                    <p class="text-muted">Personalize client experience and advisory notifications.</p>
+                </div>
+            </div>
+
+            <div class="toggles-column">
+                <label class="cyber-switch-label">
+                    <div>
+                        <span class="switch-title">Cyber Dark Theme</span>
+                        <span class="switch-desc">High contrast neon-accented dark palette (Recommended)</span>
+                    </div>
+                    <input type="checkbox" checked disabled class="cyber-switch">
+                    <span class="switch-slider"></span>
+                </label>
+
+                <label class="cyber-switch-label">
+                    <div>
+                        <span class="switch-title">Audio Feedback Cues</span>
+                        <span class="switch-desc">Subtle click & copy confirmation sounds</span>
+                    </div>
+                    <input type="checkbox" id="pref-audio" class="cyber-switch">
+                    <span class="switch-slider"></span>
+                </label>
+
+                <label class="cyber-switch-label">
+                    <div>
+                        <span class="switch-title">Real-Time Security Tips</span>
+                        <span class="switch-desc">Display live remediation recommendations as you analyze</span>
+                    </div>
+                    <input type="checkbox" id="pref-tips" checked class="cyber-switch">
+                    <span class="switch-slider"></span>
+                </label>
+
+                <label class="cyber-switch-label">
+                    <div>
+                        <span class="switch-title">Clipboard Auto-Clear Reminder</span>
+                        <span class="switch-desc">Show toast alert to purge clipboard after 60 seconds</span>
+                    </div>
+                    <input type="checkbox" id="pref-clipboard" checked class="cyber-switch">
+                    <span class="switch-slider"></span>
+                </label>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

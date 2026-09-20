@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+
+{% block title %}Audit History — SecurePass{% endblock %}
+{% block page_title %}Security Audit History{% endblock %}
+{% block page_sub %}Chronological log of password complexity and posture evaluations{% endblock %}
+
+{% block content %}
+<div class="history-layout">
+    <div class="glass-panel history-panel">
+        <!-- History Header & Controls -->
+        <div class="history-controls-bar">
+            <div class="search-filter-group">
+                <div class="table-search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="history-search-input" placeholder="Search by date, score, recommendation...">
+                </div>
+
+                <div class="filter-dropdown-group">
+                    <label for="history-filter-strength" class="filter-label">Filter:</label>
+                    <select id="history-filter-strength" class="cyber-select">
+                        <option value="all">All Strengths</option>
+                        <option value="Strong">Strong Only</option>
+                        <option value="Medium">Medium Only</option>
+                        <option value="Weak">Weak Only</option>
+                    </select>
+                </div>
+
+                <div class="filter-dropdown-group">
+                    <label for="history-sort" class="filter-label">Sort:</label>
+                    <select id="history-sort" class="cyber-select">
+                        <option value="newest">Newest First</option>
+                        <option value="oldest">Oldest First</option>
+                        <option value="score-desc">Highest Score</option>
+                        <option value="score-asc">Lowest Score</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="history-actions-group">
+                <button type="button" class="btn btn-danger-outline" id="btn-clear-history">
+                    <i class="fa-solid fa-trash-can"></i> Clear History
+                </button>
+            </div>
+        </div>
+
+        <!-- Privacy & Zero-Knowledge Banner -->
+        <div class="audit-privacy-notice">
+            <i class="fa-solid fa-user-lock text-cyan"></i>
+            <span><strong>Privacy Assurance:</strong> In compliance with zero-knowledge security, plaintext passwords are discarded instantly and are <em>never</em> recorded to disk or logs.</span>
+        </div>
+
+        <!-- Table Container -->
+        <div class="table-responsive" id="history-table-container">
+            {% if history and history|length > 0 %}
+            <table class="cyber-table" id="history-table">
+                <thead>
+                    <tr>
+                        <th>Date & Time</th>
+                        <th>Score</th>
+                        <th>Strength</th>
+                        <th>Requirement Breakdown</th>
+                        <th>Recommendation / Summary</th>
+                    </tr>
+                </thead>
+                <tbody id="history-tbody">
+                    {% for item in history %}
+                    <tr data-strength="{{ item.strength }}" data-score="{{ item.score }}" data-timestamp="{{ item.timestamp }}">
+                        <td class="font-mono text-muted text-sm">{{ item.timestamp }}</td>
+                        <td>
+                            <span class="score-badge">{{ item.score }}/5</span>
+                        </td>
+                        <td>
+                            <span class="status-badge badge-{{ item.status_class }}">
+                                {{ item.strength }}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="req-chips-row">
+                                <span class="chip-dot {% if item.checks.length %}dot-pass{% else %}dot-fail{% endif %}" title="Length 8+">L</span>
+                                <span class="chip-dot {% if item.checks.uppercase %}dot-pass{% else %}dot-fail{% endif %}" title="Uppercase A-Z">U</span>
+                                <span class="chip-dot {% if item.checks.lowercase %}dot-pass{% else %}dot-fail{% endif %}" title="Lowercase a-z">a</span>
+                                <span class="chip-dot {% if item.checks.number %}dot-pass{% else %}dot-fail{% endif %}" title="Digits 0-9">#</span>
+                                <span class="chip-dot {% if item.checks.special %}dot-pass{% else %}dot-fail{% endif %}" title="Symbols !@#">$</span>
+                            </div>
+                        </td>
+                        <td class="text-sm text-secondary">{{ item.recommendations }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <!-- Professional Empty State -->
+            <div class="empty-state-card" id="empty-state">
+                <div class="empty-icon-halo">
+                    <i class="fa-solid fa-shield-virus text-cyan"></i>
+                </div>
+                <h3>No password checks yet.</h3>
+                <p>Evaluate your credentials to generate audit logs and track your password resilience over time.</p>
+                <a href="{{ url_for('analyze') }}" class="btn btn-primary mt-3">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> Analyze Your First Password
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const searchInput = document.getElementById('history-search-input');
+    const filterStrength = document.getElementById('history-filter-strength');
+    const sortSelect = document.getElementById('history-sort');
+    const tbody = document.getElementById('history-tbody');
+    const clearBtn = document.getElementById('btn-clear-history');
+
+    function filterAndSortTable() {
+        if (!tbody) return;
+        const rows = Array.from(tbody.querySelectorAll('tr'));
+        const query = (searchInput ? searchInput.value : '').toLowerCase();
+        const selectedStrength = filterStrength ? filterStrength.value : 'all';
+        const sortBy = sortSelect ? sortSelect.value : 'newest';
+
+        rows.forEach(row => {
+            const rowText = row.innerText.toLowerCase();
+            const strength = row.getAttribute('data-strength');
+            const matchesQuery = !query || rowText.includes(query);
+            const matchesStrength = selectedStrength === 'all' || strength === selectedStrength;
+
+            row.style.display = (matchesQuery && matchesStrength) ? '' : 'none';
+        });
+
+        // Sorting
+        rows.sort((a, b) => {
+            const timeA = new Date(a.getAttribute('data-timestamp')).getTime() || 0;
+            const timeB = new Date(b.getAttribute('data-timestamp')).getTime() || 0;
+            const scoreA = parseInt(a.getAttribute('data-score') || '0', 10);
+            const scoreB = parseInt(b.getAttribute('data-score') || '0', 10);
+
+            if (sortBy === 'newest') return timeB - timeA;
+            if (sortBy === 'oldest') return timeA - timeB;
+            if (sortBy === 'score-desc') return scoreB - scoreA;
+            if (sortBy === 'score-asc') return scoreA - scoreB;
+            return 0;
+        });
+
+        rows.forEach(row => tbody.appendChild(row));
+    }
+
+    if (searchInput) searchInput.addEventListener('input', filterAndSortTable);
+    if (filterStrength) filterStrength.addEventListener('change', filterAndSortTable);
+    if (sortSelect) sortSelect.addEventListener('change', filterAndSortTable);
+
+    if (clearBtn) {
+        clearBtn.addEventListener('click', async () => {
+            if (!confirm("Are you sure you want to clear all password security audit history? This action cannot be undone.")) {
+                return;
+            }
+            try {
+                const res = await fetch('/api/history/clear', { method: 'POST' });
+                const json = await res.json();
+                window.location.reload();
+            } catch (err) {
+                alert("Failed to clear history.");
+            }
+        });
+    }
+</script>
+{% endblock %}

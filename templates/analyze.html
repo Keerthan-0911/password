@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+
+{% block title %}Password Strength Analyzer — SecurePass{% endblock %}
+{% block page_title %}Password Strength Analyzer{% endblock %}
+{% block page_sub %}Real-time entropy and vulnerability inspection engine{% endblock %}
+
+{% block content %}
+<div class="analyzer-layout">
+    <!-- Main Card -->
+    <div class="glass-panel analyzer-main-card">
+        <div class="card-top-header">
+            <div>
+                <h2>Analyze Your Password</h2>
+                <p class="text-muted">Type or paste any password below to compute cryptographic score and vulnerability vectors.</p>
+            </div>
+            <div class="zero-storage-badge">
+                <i class="fa-solid fa-user-shield text-cyan"></i>
+                <span>Zero-Knowledge: Never Stored in Plaintext</span>
+            </div>
+        </div>
+
+        <!-- Input Area -->
+        <div class="analyzer-input-box">
+            <label for="analyzer-password" class="field-label">Candidate Password</label>
+            <div class="input-icon-wrapper input-hero">
+                <i class="fa-solid fa-key input-icon"></i>
+                <input 
+                    type="password" 
+                    id="analyzer-password" 
+                    class="form-control form-control-hero" 
+                    placeholder="Enter password to analyze in real-time..."
+                    autocomplete="off"
+                    spellcheck="false"
+                >
+                <div class="input-actions-group">
+                    <button type="button" class="btn-icon" id="btn-clear-input" title="Clear input" aria-label="Clear input">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                    <button type="button" class="btn-icon" id="btn-toggle-analyzer-pass" title="Toggle visibility" aria-label="Toggle password visibility">
+                        <i class="fa-solid fa-eye" id="analyzer-eye-icon"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="input-meta-bar">
+                <div class="meta-item">
+                    <span class="meta-label">Length:</span>
+                    <span class="meta-value font-mono" id="char-counter">0 chars</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Estimated Entropy:</span>
+                    <span class="meta-value font-mono text-cyan" id="entropy-value">0 bits</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Crack Resistance:</span>
+                    <span class="meta-value font-mono" id="crack-time">Instant</span>
+                </div>
+            </div>
+
+            <!-- Action buttons -->
+            <div class="analyzer-cta-row">
+                <button type="button" class="btn btn-primary" id="btn-save-analysis">
+                    <i class="fa-solid fa-floppy-disk"></i> Record Result in History
+                </button>
+                <a href="{{ url_for('generator') }}" class="btn btn-glass">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> Generate Uncrackable Password
+                </a>
+            </div>
+        </div>
+
+        <!-- Dynamic Strength Gauge & Meter Section -->
+        <div class="analyzer-results-section" id="analyzer-results">
+            <div class="meter-wrapper">
+                <div class="meter-header">
+                    <div class="meter-level-group">
+                        <span class="meter-sub">SECURITY STRENGTH RATING</span>
+                        <h3 class="meter-level-name" id="strength-label">Enter Password</h3>
+                    </div>
+                    <div class="meter-score-badge">
+                        <span class="score-num" id="score-number">0</span>
+                        <span class="score-den">/ 5</span>
+                    </div>
+                </div>
+
+                <!-- Animated 5-segment strength meter -->
+                <div class="strength-segments" id="strength-segments">
+                    <div class="segment" id="seg-1"></div>
+                    <div class="segment" id="seg-2"></div>
+                    <div class="segment" id="seg-3"></div>
+                    <div class="segment" id="seg-4"></div>
+                    <div class="segment" id="seg-5"></div>
+                </div>
+
+                <div class="meter-progress-track">
+                    <div class="meter-progress-bar" id="meter-progress-bar" style="width: 0%;"></div>
+                </div>
+            </div>
+
+            <!-- Checklist of 5 Requirements -->
+            <div class="requirements-container">
+                <h4 class="req-heading"><i class="fa-solid fa-list-check text-cyan"></i> Security Requirements</h4>
+                <div class="requirements-grid">
+                    <div class="req-item" id="req-length">
+                        <div class="req-icon"><i class="fa-solid fa-circle-xmark text-rose"></i></div>
+                        <div class="req-text">
+                            <span class="req-title">Minimum 8 characters</span>
+                            <span class="req-status text-muted">Insufficient length</span>
+                        </div>
+                    </div>
+
+                    <div class="req-item" id="req-upper">
+                        <div class="req-icon"><i class="fa-solid fa-circle-xmark text-rose"></i></div>
+                        <div class="req-text">
+                            <span class="req-title">Uppercase letter (A-Z)</span>
+                            <span class="req-status text-muted">Missing uppercase</span>
+                        </div>
+                    </div>
+
+                    <div class="req-item" id="req-lower">
+                        <div class="req-icon"><i class="fa-solid fa-circle-xmark text-rose"></i></div>
+                        <div class="req-text">
+                            <span class="req-title">Lowercase letter (a-z)</span>
+                            <span class="req-status text-muted">Missing lowercase</span>
+                        </div>
+                    </div>
+
+                    <div class="req-item" id="req-number">
+                        <div class="req-icon"><i class="fa-solid fa-circle-xmark text-rose"></i></div>
+                        <div class="req-text">
+                            <span class="req-title">Numeric digit (0-9)</span>
+                            <span class="req-status text-muted">Missing numbers</span>
+                        </div>
+                    </div>
+
+                    <div class="req-item" id="req-special">
+                        <div class="req-icon"><i class="fa-solid fa-circle-xmark text-rose"></i></div>
+                        <div class="req-text">
+                            <span class="req-title">Special character (!@#$%^&*)</span>
+                            <span class="req-status text-muted">Missing symbols</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Security Recommendation Section -->
+            <div class="recommendation-card glass-panel" id="recommendation-box">
+                <div class="rec-icon-box">
+                    <i class="fa-solid fa-lightbulb text-amber" id="rec-icon"></i>
+                </div>
+                <div class="rec-body">
+                    <h5 id="rec-heading">Security Recommendation</h5>
+                    <p id="rec-text">Enter a password above to receive real-time cryptographic hardening suggestions.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/analyzer.js') }}"></script>
+{% endblock %}

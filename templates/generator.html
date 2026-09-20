@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+
+{% block title %}Password Generator — SecurePass{% endblock %}
+{% block page_title %}CSPRNG Password Generator{% endblock %}
+{% block page_sub %}Generate uncrackable, cryptographically secure credentials{% endblock %}
+
+{% block content %}
+<div class="generator-layout">
+    <div class="glass-panel generator-card">
+        <div class="card-top-header">
+            <div>
+                <h2>Cryptographic Password Generator</h2>
+                <p class="text-muted">Built with hardware-level entropy (Python <code>secrets</code> / System CSPRNG) to defy quantum dictionary and rainbow table attacks.</p>
+            </div>
+            <div class="entropy-badge">
+                <i class="fa-solid fa-microchip text-purple"></i>
+                <span>OS System Entropy</span>
+            </div>
+        </div>
+
+        <!-- Generated Password Output Display -->
+        <div class="generated-display-wrapper">
+            <div class="generated-output-box">
+                <div class="pass-text-container" id="generated-password-display">
+                    <span class="placeholder-text">Click "Generate Password" below</span>
+                </div>
+                <div class="pass-actions">
+                    <button type="button" class="btn-icon btn-action-lg" id="btn-copy-pass" title="Copy to clipboard" aria-label="Copy to clipboard">
+                        <i class="fa-solid fa-copy"></i>
+                    </button>
+                    <button type="button" class="btn-icon btn-action-lg" id="btn-regenerate" title="Regenerate" aria-label="Regenerate password">
+                        <i class="fa-solid fa-arrows-rotate"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mini Strength Bar for Generated Pass -->
+            <div class="gen-meta-row">
+                <div class="meta-pill">
+                    <span class="text-muted">Length:</span>
+                    <span class="font-mono text-cyan" id="gen-len-display">16 chars</span>
+                </div>
+                <div class="meta-pill">
+                    <span class="text-muted">Strength:</span>
+                    <span class="font-mono text-emerald" id="gen-strength-badge">Strong (5/5)</span>
+                </div>
+                <div class="meta-pill">
+                    <span class="text-muted">Entropy:</span>
+                    <span class="font-mono text-purple" id="gen-entropy-display">~96 bits</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Controls & Configuration Options -->
+        <div class="generator-controls-grid">
+            <!-- Length Slider -->
+            <div class="control-box glass-panel-inner">
+                <div class="slider-header">
+                    <label for="length-slider" class="control-label">Password Length</label>
+                    <span class="slider-value-badge font-mono" id="length-val">16</span>
+                </div>
+                <input 
+                    type="range" 
+                    id="length-slider" 
+                    min="8" 
+                    max="50" 
+                    value="16" 
+                    class="cyber-range"
+                >
+                <div class="range-marks font-mono">
+                    <span>8 (Min)</span>
+                    <span>16 (Recommended)</span>
+                    <span>32</span>
+                    <span>50 (Max)</span>
+                </div>
+            </div>
+
+            <!-- Character Set Toggles -->
+            <div class="control-box glass-panel-inner">
+                <span class="control-label">Character Complexity Rules</span>
+                <div class="toggles-grid">
+                    <label class="cyber-switch-label">
+                        <span class="switch-title">Uppercase Letters (A-Z)</span>
+                        <input type="checkbox" id="chk-upper" checked class="cyber-switch">
+                        <span class="switch-slider"></span>
+                    </label>
+
+                    <label class="cyber-switch-label">
+                        <span class="switch-title">Lowercase Letters (a-z)</span>
+                        <input type="checkbox" id="chk-lower" checked class="cyber-switch">
+                        <span class="switch-slider"></span>
+                    </label>
+
+                    <label class="cyber-switch-label">
+                        <span class="switch-title">Numeric Digits (0-9)</span>
+                        <input type="checkbox" id="chk-digits" checked class="cyber-switch">
+                        <span class="switch-slider"></span>
+                    </label>
+
+                    <label class="cyber-switch-label">
+                        <span class="switch-title">Special Characters (!@#$%^&*)</span>
+                        <input type="checkbox" id="chk-symbols" checked class="cyber-switch">
+                        <span class="switch-slider"></span>
+                    </label>
+
+                    <label class="cyber-switch-label">
+                        <span class="switch-title">Exclude Ambiguous (l, 1, I, O, 0)</span>
+                        <input type="checkbox" id="chk-avoid-ambiguous" class="cyber-switch">
+                        <span class="switch-slider"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="generator-footer-actions">
+            <button type="button" class="btn btn-primary btn-lg" id="btn-generate-main">
+                <i class="fa-solid fa-wand-magic-sparkles"></i> Generate Password
+            </button>
+            <button type="button" class="btn btn-glass btn-lg" id="btn-copy-main">
+                <i class="fa-solid fa-clipboard-check"></i> Copy Password
+            </button>
+            <button type="button" class="btn btn-outline btn-lg" id="btn-send-to-analyzer">
+                <i class="fa-solid fa-shield-virus"></i> Test in Analyzer
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/generator.js') }}"></script>
+{% endblock %}

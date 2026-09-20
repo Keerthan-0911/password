@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In — SecurePass Security Suite</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="auth-body">
+    <div class="auth-container">
+        <!-- Left Side: Brand & Cyber Visuals -->
+        <div class="auth-brand-side">
+            <div class="brand-top">
+                <div class="brand-logo">
+                    <div class="shield-badge shield-large">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </div>
+                    <span class="brand-name">Secure<span class="text-cyan">Pass</span></span>
+                </div>
+                <div class="cyber-chip">Zero-Knowledge Defense</div>
+            </div>
+
+            <div class="auth-hero-message">
+                <h2>Secure your digital identity.</h2>
+                <p>Analyze, generate, and strengthen your passwords with enterprise-grade cryptographic analysis.</p>
+
+                <!-- Security Feature Highlights -->
+                <div class="security-perks">
+                    <div class="perk-item">
+                        <i class="fa-solid fa-lock-open text-cyan"></i>
+                        <span>Zero Plaintext Transmission</span>
+                    </div>
+                    <div class="perk-item">
+                        <i class="fa-solid fa-microchip text-purple"></i>
+                        <span>CSPRNG Entropy Engine</span>
+                    </div>
+                    <div class="perk-item">
+                        <i class="fa-solid fa-file-shield text-emerald"></i>
+                        <span>Audit History Logging</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Terminal decorative widget -->
+            <div class="cyber-terminal-card glass-panel">
+                <div class="terminal-bar">
+                    <span class="t-dot dot-red"></span>
+                    <span class="t-dot dot-yellow"></span>
+                    <span class="t-dot dot-green"></span>
+                    <span class="terminal-title">secops-agent@gateway:~</span>
+                </div>
+                <div class="terminal-body font-mono">
+                    <p><span class="text-cyan">$</span> securepass --init-node --mode=strict</p>
+                    <p class="text-emerald">[OK] Cryptographic session handshakes initialized</p>
+                    <p class="text-muted">[INFO] Zero-knowledge policy active: No password storage</p>
+                </div>
+            </div>
+
+            <div class="auth-brand-footer">
+                <span>&copy; 2025 SecurePass Cyber Systems. All rights reserved.</span>
+            </div>
+        </div>
+
+        <!-- Right Side: Login / Register Card -->
+        <div class="auth-form-side">
+            <div class="auth-card glass-panel">
+                <div class="auth-card-header">
+                    <h3>{% if is_register %}Create Security Account{% else %}SecOps Portal Access{% endif %}</h3>
+                    <p>{% if is_register %}Register to audit credentials and monitor security compliance.{% else %}Enter your Gmail, operator ID, or credentials to open your dashboard.{% endif %}</p>
+                </div>
+
+                {% if error %}
+                <div class="error-alert">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                    <span>{{ error }}</span>
+                </div>
+                {% endif %}
+
+                <!-- Google / Gmail 1-Click Fast Access -->
+                <div class="google-auth-section mb-3">
+                    <button type="button" class="btn btn-google btn-block" id="btn-google-login">
+                        <i class="fa-brands fa-google text-cyan"></i>
+                        <span>Continue with Google / Gmail</span>
+                    </button>
+                    <div class="auth-divider">
+                        <span>OR AUTHENTICATE VIA CREDENTIALS</span>
+                    </div>
+                </div>
+
+                <form action="{% if is_register %}{{ url_for('register') }}{% else %}{{ url_for('login') }}{% endif %}" method="POST" class="auth-form" id="login-form">
+                    <div class="form-group">
+                        <label for="username">{% if is_register %}Username{% else %}Username or Gmail Address{% endif %}</label>
+                        <div class="input-icon-wrapper">
+                            <i class="fa-solid fa-envelope input-icon"></i>
+                            <input 
+                                type="text" 
+                                id="username" 
+                                name="username" 
+                                class="form-control" 
+                                placeholder="e.g. yourname@gmail.com or secops_admin" 
+                                required 
+                                autofocus
+                                autocomplete="username"
+                            >
+                        </div>
+                    </div>
+
+                    {% if is_register %}
+                    <div class="form-group">
+                        <label for="email">Account Email</label>
+                        <div class="input-icon-wrapper">
+                            <i class="fa-solid fa-at input-icon"></i>
+                            <input 
+                                type="email" 
+                                id="email" 
+                                name="email" 
+                                class="form-control" 
+                                placeholder="e.g. analyst@company.com"
+                                autocomplete="email"
+                            >
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <div class="form-group">
+                        <div class="label-row">
+                            <label for="password">Password</label>
+                            {% if not is_register %}
+                            <a href="#" class="forgot-password-link" onclick="alert('Password Recovery Notice: In demo mode, enter any password with at least 4 characters to log in.'); return false;">Forgot password?</a>
+                            {% endif %}
+                        </div>
+                        <div class="input-icon-wrapper">
+                            <i class="fa-solid fa-key input-icon"></i>
+                            <input 
+                                type="password" 
+                                id="password" 
+                                name="password" 
+                                class="form-control password-input" 
+                                placeholder="••••••••••••" 
+                                required
+                                autocomplete="current-password"
+                            >
+                            <button type="button" class="password-toggle-btn" id="toggle-password" aria-label="Toggle password visibility">
+                                <i class="fa-solid fa-eye" id="toggle-icon"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    {% if not is_register %}
+                    <div class="form-row-between">
+                        <label class="custom-checkbox">
+                            <input type="checkbox" name="remember" id="remember" checked>
+                            <span class="checkmark"></span>
+                            <span class="checkbox-label">Remember me on this browser</span>
+                        </label>
+                    </div>
+                    {% endif %}
+
+                    <button type="submit" class="btn btn-primary btn-block" id="login-submit-btn">
+                        <span class="btn-text">
+                            <i class="fa-solid fa-fingerprint"></i> 
+                            {% if is_register %}Complete Registration{% else %}Authenticate & Enter{% endif %}
+                        </span>
+                        <span class="btn-loader d-none"><i class="fa-solid fa-spinner fa-spin"></i> Verifying...</span>
+                    </button>
+                </form>
+
+                <div class="auth-card-footer">
+                    <div class="auth-switch-link">
+                        {% if is_register %}
+                            <span>Already registered?</span>
+                            <a href="{{ url_for('login') }}" class="text-cyan font-semibold">Sign In Here</a>
+                        {% else %}
+                            <span>New operator?</span>
+                            <a href="{{ url_for('register') }}" class="text-cyan font-semibold">Create Account</a>
+                        {% endif %}
+                    </div>
+                    <div class="footer-links-row">
+                        <a href="{{ url_for('index') }}" class="back-to-home">
+                            <i class="fa-solid fa-arrow-left"></i> Return to Homepage
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Google / Gmail 1-Click Fast Login
+        const googleBtn = document.getElementById('btn-google-login');
+        if (googleBtn) {
+            googleBtn.addEventListener('click', () => {
+                const emailInput = document.getElementById('username');
+                const passInput = document.getElementById('password');
+                const form = document.getElementById('login-form');
+                
+                // Prompt or prefill Gmail
+                const gmailPrompt = prompt('Enter your Gmail address to sign in (or press OK to use default Gmail):', 'operator@gmail.com');
+                if (gmailPrompt !== null) {
+                    const targetEmail = gmailPrompt.trim() || 'operator@gmail.com';
+                    if (emailInput) emailInput.value = targetEmail;
+                    if (passInput) passInput.value = 'SecurePass#2026';
+                    if (form) form.submit();
+                }
+            });
+        }
+        // Password toggle
+        const toggleBtn = document.getElementById('toggle-password');
+        const passInput = document.getElementById('password');
+        const toggleIcon = document.getElementById('toggle-icon');
+
+        if (toggleBtn && passInput && toggleIcon) {
+            toggleBtn.addEventListener('click', () => {
+                const isPassword = passInput.type === 'password';
+                passInput.type = isPassword ? 'text' : 'password';
+                toggleIcon.className = isPassword ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye';
+            });
+        }
+
+        // Form submit loading
+        const form = document.getElementById('login-form');
+        const submitBtn = document.getElementById('login-submit-btn');
+        if (form && submitBtn) {
+            form.addEventListener('submit', () => {
+                const btnText = submitBtn.querySelector('.btn-text');
+                const btnLoader = submitBtn.querySelector('.btn-loader');
+                if (btnText && btnLoader) {
+                    btnText.classList.add('d-none');
+                    btnLoader.classList.remove('d-none');
+                }
+            });
+        }
+    </script>
+</body>
+</html>

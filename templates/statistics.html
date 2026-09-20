@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+
+{% block title %}Security Statistics — SecurePass Analytics{% endblock %}
+{% block page_title %}Security Statistics & Analytics{% endblock %}
+{% block page_sub %}Entropy patterns, compliance distributions, and vulnerability metrics{% endblock %}
+
+{% block content %}
+<div class="statistics-layout">
+    <!-- 4 Summary Cards with Percentages -->
+    <div class="stats-summary-grid">
+        <!-- Total -->
+        <div class="stat-box glass-panel border-cyan">
+            <div class="stat-icon-wrapper text-cyan">
+                <i class="fa-solid fa-database"></i>
+            </div>
+            <div class="stat-content">
+                <span class="stat-label">Total Audited</span>
+                <h3 class="stat-number">{{ total }}</h3>
+                <span class="stat-sub">100% evaluated samples</span>
+            </div>
+        </div>
+
+        <!-- Strong -->
+        <div class="stat-box glass-panel border-emerald">
+            <div class="stat-icon-wrapper text-emerald">
+                <i class="fa-solid fa-shield-check"></i>
+            </div>
+            <div class="stat-content">
+                <span class="stat-label">Strong Passwords</span>
+                <h3 class="stat-number text-emerald">{{ strong }}</h3>
+                <span class="stat-sub">
+                    <strong>{% if total > 0 %}{{ ((strong / total) * 100) | round(1) }}%{% else %}0%{% endif %}</strong> of total
+                </span>
+            </div>
+        </div>
+
+        <!-- Medium -->
+        <div class="stat-box glass-panel border-amber">
+            <div class="stat-icon-wrapper text-amber">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <div class="stat-content">
+                <span class="stat-label">Medium Passwords</span>
+                <h3 class="stat-number text-amber">{{ medium }}</h3>
+                <span class="stat-sub">
+                    <strong>{% if total > 0 %}{{ ((medium / total) * 100) | round(1) }}%{% else %}0%{% endif %}</strong> of total
+                </span>
+            </div>
+        </div>
+
+        <!-- Weak -->
+        <div class="stat-box glass-panel border-rose">
+            <div class="stat-icon-wrapper text-rose">
+                <i class="fa-solid fa-biohazard"></i>
+            </div>
+            <div class="stat-content">
+                <span class="stat-label">Weak Passwords</span>
+                <h3 class="stat-number text-rose">{{ weak }}</h3>
+                <span class="stat-sub">
+                    <strong>{% if total > 0 %}{{ ((weak / total) * 100) | round(1) }}%{% else %}0%{% endif %}</strong> of total
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Grid: Doughnut & Bar Chart -->
+    <div class="charts-double-grid">
+        <!-- Doughnut Chart: Overall Strength Breakdown -->
+        <div class="glass-panel chart-card">
+            <div class="chart-header">
+                <h3><i class="fa-solid fa-chart-pie text-cyan"></i> Password Strength Distribution</h3>
+                <span class="chart-tag">Categorical Share</span>
+            </div>
+            <p class="chart-desc">Proportion of Strong, Medium, and Weak credentials analyzed.</p>
+            
+            <div class="chart-canvas-container doughnut-container">
+                <canvas id="strengthDoughnutChart"></canvas>
+            </div>
+
+            <div class="chart-legend-custom font-mono text-sm">
+                <div class="legend-item"><span class="legend-dot bg-emerald"></span> Strong: <strong>{{ strong }}</strong> ({% if total > 0 %}{{ ((strong / total) * 100) | round(1) }}%{% else %}0%{% endif %})</div>
+                <div class="legend-item"><span class="legend-dot bg-amber"></span> Medium: <strong>{{ medium }}</strong> ({% if total > 0 %}{{ ((medium / total) * 100) | round(1) }}%{% else %}0%{% endif %})</div>
+                <div class="legend-item"><span class="legend-dot bg-rose"></span> Weak: <strong>{{ weak }}</strong> ({% if total > 0 %}{{ ((weak / total) * 100) | round(1) }}%{% else %}0%{% endif %})</div>
+            </div>
+        </div>
+
+        <!-- Bar Chart: Score Breakdown 0 to 5 -->
+        <div class="glass-panel chart-card">
+            <div class="chart-header">
+                <h3><i class="fa-solid fa-chart-column text-purple"></i> Score Histogram (0 to 5)</h3>
+                <span class="chart-tag">5-Point Grading</span>
+            </div>
+            <p class="chart-desc">Frequency count of individual security requirement compliance scores.</p>
+            
+            <div class="chart-canvas-container">
+                <canvas id="scoreBarChart"></canvas>
+            </div>
+
+            <div class="score-summary-bar mt-3">
+                <span class="text-muted text-sm">Composite Security Health:</span>
+                <span class="text-cyan font-mono font-semibold">
+                    {% if total > 0 %}
+                    {{ (((score_dist[5]*5 + score_dist[4]*4 + score_dist[3]*3 + score_dist[2]*2 + score_dist[1]*1) / (total * 5)) * 100) | round(1) }}% Resilience
+                    {% else %}
+                    N/A (No tests yet)
+                    {% endif %}
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    window.analyticsData = {
+        strong: {{ strong }},
+        medium: {{ medium }},
+        weak: {{ weak }},
+        scoreDist: {{ score_dist | tojson }}
+    };
+</script>
+<script src="{{ url_for('static', filename='js/charts.js') }}"></script>
+{% endblock %}
